@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanos Voice Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d3d3d3; /* Elephant grey background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+        h1 {
+            color: #4285f4;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            margin-top: 20px;
+            color: #333;
+            font-size: 1.5em;
+        }
+        .input-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: calc(100% - 90px); /* Adjust width to leave space for icons */
+            padding: 10px;
+            padding-right: 90px; /* Add padding for mic icon and button */
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            background-color: #e7f3fe; /* Sky blue background */
+            box-sizing: border-box; /* Ensure padding is included in width */
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #4285f4;
+            box-shadow: 0 0 10px rgba(66, 133, 244, 0.5);
+        }
+        .mic-icon, #submit-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #4285f4;
+            font-size: 1.5em;
+            background: none; /* Remove background for button */
+            border: none; /* Remove border for button */
+            transition: color 0.3s ease;
+        }
+        .mic-icon {
+            right: 50px; /* Adjust the mic position */
+        }
+        #submit-btn {
+            right: 10px; /* Adjust the position */
+        }
+        .mic-icon:hover, #submit-btn:hover {
+            color: #333;
+        }
+        #response {
+            margin-top: 20px;
+            color: #333;
+            background: #f0f8ff; /* Sky blue for response box */
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 50px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Thanos Voice Assistant</h1>
+    <p>Your personal assistant for translation, app control, and more.</p>
+    
+    <h2>Ask Thanos</h2>
+    <div class="input-container">
+        <input type="text" id="command" placeholder="Type or speak your command...">
+        <span class="mic-icon" onclick="startListening()">🎤</span>
+        <button id="submit-btn" onclick="submitCommand()">➤</button>
+    </div>
+    
+    <div id="response">Ready to assist...</div>
+</div>
+
+<script>
+    let recognition;
+    // Check if the SpeechRecognition API is available
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = function() {
+            console.log("Voice recognition started. Speak now.");
+            document.getElementById('response').innerText = "Listening...";
+        };
+
+        recognition.onspeechend = function() {
+            console.log("Voice recognition ended.");
+            recognition.stop();
+        };
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            console.log("Recognized text:", transcript);
+            document.getElementById('command').value = transcript;
+            submitCommand(); // Automatically submit the command after recognition
+        };
+
+        recognition.onerror = function(event) {
+            console.error("Speech recognition error detected:", event.error);
+            document.getElementById('response').innerText = "Sorry, I didn't catch that. Please try again.";
+        };
+    } else {
+        console.log("Speech recognition not supported in this browser.");
+        document.getElementById('response').innerText = "Voice recognition not supported in this browser.";
+    }
+
+    function startListening() {
+        if (recognition) {
+            recognition.start();
+        }
+    }
+
+    function submitCommand() {
+        const command = document.getElementById('command').value;
+        if (command.trim() === "") {
+            document.getElementById('response').innerText = "Please enter or say a command.";
+            return;
+        }
+
+        document.getElementById('response').innerText = "Processing...";
+        console.log("Command submitted:", command);
+
+        // Here, you can add custom handling for specific commands.
+        // For example:
+        if (command.toLowerCase().includes("translate")) {
+            document.getElementById('response').innerText = "Translating your text...";
+            // Implement translation functionality here
+        } else if (command.toLowerCase().includes("open app")) {
+            document.getElementById('response').innerText = "Opening requested app...";
+            // Implement app-opening functionality here
+        } else {
+            document.getElementById('response').innerText = `I'm ready to assist with "${command}".`;
+        }
+
+        document.getElementById('command').value = ""; // Clear the input field after submission
+    }
+</script>
+
+</body>
+</html>
