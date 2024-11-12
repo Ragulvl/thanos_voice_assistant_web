@@ -18,8 +18,10 @@ Thanos Voice Assistant is a voice-controlled assistant that helps users with var
    git clone https://github.com/Ragulvl/thanos_voice_assistant_web.git
 Navigate to the project directory:
 
-bash
+'''bash
+
 cd thanos_voice_assistant_web
+
 Install the required dependencies:
 
 bash
